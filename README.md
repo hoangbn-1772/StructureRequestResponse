@@ -152,7 +152,7 @@
 	+ Status code: 200 OK, nghĩa là server đã chấp nhận request và gửi lại response. Phần Response body trả về "Fault User Already Exits" có nghĩa là User này đã tồn tại.
 
 ### Các cách gửi dữ liệu với POST method
-- Về cơ bản, có 3 cách để gửi dữ liệu HTML đến server
+- Về cơ bản, có 4 cách để gửi dữ liệu đến server
 	+ multipart/form-data
 	+ application/x-www-form-urlencoded
 	+ application/json (raw)
