@@ -1,6 +1,6 @@
 # Structure of HTTP Request and Response
 
-## HTTP Request
+## Phần 1: HTTP Request
 - Để bắt đầu trao đổi dữ liệu, client khởi tạo một HTTP secsion bằng cách mở một kết nối TCP đến HTTP server sau đó gửi request đến server này.
 - Một HTTP client gửi một HTTP request tới server theo định dạng sau:
 
@@ -66,7 +66,7 @@
 - Gói thông tin được gửi từ server về client để đáp ứng request gửi lên.
 - Cấu trúc của HTTP response gần giống với HTTP Request, chỉ khác nhau Request-Line với HTTP request và Status-Line với HTTP-Response.
 
-<img src="images/http_response.png"/>
+<img src="images/form_request_response.png"/>
 
 ### Status-Line
 - Status-Line cũng có 3 phần như sau:
@@ -113,35 +113,110 @@
 <img src="images/response_body.png"/>
 
 
-## Postman
-
-### Các cách gửi dữ liệu với POST method
-- Về cơ bản, có 3 cách để gửi dữ liệu HTML đến server
-	+ application/ x-www-form-urlencoded
-	+ multipart/form-data
-	+ application/json
-- Ngoài ra còn có thể gửi dữ liệu lên server dưới dạng binary khi muốn đính kèm dữ liệu phi văn bản (video, audio, images, bất cứ dữ liệu nhị phân nào) vào request.
-
-#### FormUrlEncoded trong HTTP POST
-- Annotation này tự động điều chỉnh loại MIME của request thành *application/x-www-form-urlencoded*. Mục đích là gửi danh sách các cặp key/value đến server.
-- Sử dụng nếu muốn gửi dữ liệu dạng text/ASCII đơn giản.
-- Phần body của HTTP message gửi tới server về cơ bản là một chuỗi truy vấn có định dạng key/value. Các cặp key/value được phân tách nhau bởi '&' và các key và value phân tách nhau bởi '='.
-- URL sẽ được mã hóa khi gửi.
-- Lưu ý, không thể dùng Annotation này với các request GET. Ngoài ra cần sử dụng @Field cho các tham số mà sẽ gửi với request.
-
-<img src="images/form_url_encoded.png"/>
-
-#### Multipart/form-data
-- Về cơ bản nó giống với content type "application/x-www-form-urlencoding", nhưng "application/x-www-form-urlencoding" không hiệu quả để gửi với số lượng lớn dữ liệu nhị phân hoặc văn bản có chứa các ký tự không phải ASCII. Vì thế form-data được sử dụng để thay thế.
-
-#### application/json (raw)
-- Đây là option hay được dùng nhất, body message được hiển thị dưới dạng luồng bit đại diện cho request body.
+## Phần 2: Thực hành với Postman
 
 #### Thực hành
 - GET Request on Postman: Endpoint: http://restapi.demoqa.com/customer/register
 	+ Send request:
 		
 		<img src="images/get_send_request.png"/>
+
+	+ Xem HTTP status code, nó sẽ trả về *405 Method not allowed*. Có nghĩa là phương thức này không chính xác.
+
+		<img src="images/get_response.png">
+
+	+ Phần body, và để ý dòng error được trả về.
+
+		<img src="images/get_response_body.png"/>
+
+- POST Request không có body
+	+ Thay đổi loại phương thức GET thành POST và Send request.
+
+		<img src="images/post_send_request.png"/>
+
+	+ Kiểm tra response và status code.
+
+		<img src="images/post_response.png"/>
+
+	+ Error trả về là "FAULT_INVALID_POST_REQUEST" có nghĩa là dữ liệu POST không hợp lệ. Status code "400 BAD Request", có nghĩa là các tham số request không khớp với các tham số trên server để nhận được response.
+
+- POST Request có body.
+	+ Thêm một body vào POST Request. Dữ liệu gửi lên dưới dạng JSON.
+
+		<img src="images/post_resquest_body.png"/>
+
+	+ Kiểm tra response.
+
+		<img src="images/post_response_body.png"/>
+
+	+ Status code: 200 OK, nghĩa là server đã chấp nhận request và gửi lại response. Phần Response body trả về "Fault User Already Exits" có nghĩa là User này đã tồn tại.
+
+### Các cách gửi dữ liệu với POST method
+- Về cơ bản, có 3 cách để gửi dữ liệu HTML đến server
+	+ multipart/form-data
+	+ application/x-www-form-urlencoded
+	+ application/json (raw)
+	+ binary
+
+	<img src="images/send_data_in_post.png"/>
+
+#### Multipart/form-data
+- Sử dụng để gửi dữ liệu đóng gói bên trong form dưới dạng các cặp KEY_VALUE. Các cặp KEY-VALUE được phân tách nhau bởi '&' và KEY-VALUE phân tách nhau bởi '='
+- Về cơ bản nó giống với content type "application/x-www-form-urlencoding", nhưng "application/x-www-form-urlencoding" không hiệu quả để gửi với số lượng lớn dữ liệu nhị phân hoặc văn bản có chứa các ký tự không phải ASCII. Vì thế form-data được sử dụng để thay thế.
+
+	<img src="images/form_data.png"/>
+
+	<img src="images/send_form_data.png"/>
+
+- Nó cũng có thể file lên server.
+
+	<img src="images/form_data_file.png"/>
+
+#### application/x-www-form-urlencoded
+- Về cơ bản nó tương tự như *Multipart/form-data*. Sử dụng nếu muốn gửi dữ liệu dạng text/ASCII đơn giản.
+- Điểm khác là URL sẽ được mã hóa khi gửi.
+- Lưu ý, không thể dùng Annotation này với các request GET. Ngoài ra cần sử dụng @Field cho các tham số mà sẽ gửi với request.
+
+<img src="images/form_url_encoded.png"/>
+
+<img src="images/send_form_urlencode.png"/>
+
+#### application/json (raw)
+- Đây là option hay được dùng nhất khi gửi body trong POST method, dữ liệu gửi lên dưới dạng JSON.
+
+	<img src="images/post_raw.png"/>
+
+	<img src="images/send_raw.png">
+
+#### Binary
+- Được thiết kế để có thể gửi dữ liệu lên server dưới dạng binary khi muốn đính kèm dữ liệu phi văn bản (video, audio, images, bất cứ dữ liệu nhị phân nào) vào request.
+- Sử dụng với dữ liệu không thể nhập thủ công.
+
+	<img src="images/post_binary.png"/>
+
+## RESTful basic
+- Để có thể thiết kế API RESTful, trước tiên cần phải hiểu REST.
+- Xu hướng thiết kế web service trước kia từng là SOAP, WSDL,.. nhưng hiện nay có phương pháp tốt hơn đó là: REST
+- REST (Representation State Transfer) là một kiểu kiến trúc lập trình, định nghĩa các quy tắc để thiết kế web service tập trung vào resource. Mọi thứ trong REST để được coi là resource và được định danh thông qua URI. Resource có thể là dạng TEXT, XML, JSON,...
+- RESTful là những ứng dụng có sử dụng kiến trúc REST.
+
+### Những ràng buộc trong REST
+- Client-Server: Hoạt động theo mô hình Client-Server, việc tách biệt này nhằm đơn giản hóa việc thực hiện các thành phần, giảm sự phức tạp. Các thành phần Client và Server có thể phát triển độc lập. Server có thể phục vụ nhiều Client.
+
+- Stateless: Server và Client không lưu trạng thái của nhau. Mỗi request được gửi đi đều phải được đóng gói đầy đủ thông tin để server có thể nhận và hiểu được. Điều này giúp hệ thống dễ phát triển, bảo trì, mở rộng vì không tốn công CRUD trạng thái Client. Tuy nhiên, hạn chế là làm tăng lưu lượng thông tin cần truyền tải giữa client và server.
+
+- Cache: Các response có thể lưu trong bộ nhớ cache của Client vì thế các response từ server chứa thông tin để cho biết client có thể lưu trữ response trong cache không. Việc này được thực hiện thông qua Response Header.
+
+- Uniform Interface: Giao diện thống nhất là cơ bản để thiết kế bất kỳ dịch vụ REST nào. Giao diện thống nhất đơn giản hóa và tách rời kiến trúc, cho phép mỗi phần phát triển độc lập.
+
+- Layered System: Mỗi lớp trừu tượng hóa hóa chức năng nhất định của hệ thống tổng thể. Một lớp không nên biết về sự tồn tại của lớp khác ngoài các lớp mà nó tương tác. Làm giảm độ phức tạp của hệ thống, giúp các thành phần tách biệt nhau, dễ dàng mở rộng.
+
+- Code on demand: Đây là option. Client có thể mở rộng chức năng của mình bằng cách tải xuống code từ server (dạng Applet, Script). Việc server gửi code về client sẽ xuất hiện mối lo ngại về bảo mật.
+
+### REST và SOAP
+- Ngày nay, 2 phương pháp thường dùng để giao tiếp với ứng dụng web là: SOAP (Simple Object Access Protocol) và REST (Representation State Transfer). Cả 2 giải pháp này để là những lựa chọn tốt khi thiết kế hệ thống, nhưng nó cũng có nhược điểm riêng. Vì vậy, việc lựa chọn phương pháp nào tùy thuộc vào người phát triển hệ thống và từng trường hợp cụ thể.
+
+<img src="images/rest-soap.png"/>
 
 ## Tài liệu tham khảo
 - https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
